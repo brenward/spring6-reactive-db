@@ -16,8 +16,8 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    private static final String CUSTOMER_PATH = "/api/v2/customer";
-    private static final String CUSTOMER_PATH_ID = "/api/v2/customer/{customerId}";
+    public static final String CUSTOMER_PATH = "/api/v2/customer";
+    public static final String CUSTOMER_PATH_ID = "/api/v2/customer/{customerId}";
 
     @GetMapping(CUSTOMER_PATH)
     public Flux<CustomerDTO> listCustomers() {
@@ -41,22 +41,20 @@ public class CustomerController {
     @PutMapping(CUSTOMER_PATH_ID)
     public Mono<ResponseEntity<Void>> updateCustomer(@PathVariable Integer customerId, @Validated @RequestBody CustomerDTO customerDTO) {
         return customerService.updateCustomer(customerId, customerDTO).map(
-                updatedDto -> ResponseEntity.ok().build()
+                updatedDto -> ResponseEntity.noContent().build()
         );
     }
 
     @PatchMapping(CUSTOMER_PATH_ID)
     public Mono<ResponseEntity<Void>> patchCustomer(@PathVariable Integer customerId, @Validated @RequestBody CustomerDTO customerDTO) {
         return customerService.patchCustomer(customerId, customerDTO).map(
-                updatedDto -> ResponseEntity.ok().build()
+                updatedDto -> ResponseEntity.noContent().build()
         );
     }
 
     @DeleteMapping(CUSTOMER_PATH_ID)
     public Mono<ResponseEntity<Void>> deleteCustomer(@PathVariable Integer customerId) {
-        return customerService.deleteCustomerById(customerId).map(
-                response -> ResponseEntity.noContent().build()
-        );
+        return customerService.deleteCustomerById(customerId).thenReturn(ResponseEntity.noContent().build());
     }
 
 }
