@@ -22,7 +22,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Mono<CustomerDTO> getCustomerById(Integer id) {
-        return null;
+        return customerRepository.findById(id).map(customerMapper::customerToCustomerDto);
     }
 
     @Override
