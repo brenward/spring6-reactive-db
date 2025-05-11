@@ -2,6 +2,8 @@ package com.bwardweb.spring6_reactive_db.repositories;
 
 import com.bwardweb.spring6_reactive_db.config.DatabaseConfig;
 import com.bwardweb.spring6_reactive_db.domain.Beer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
@@ -33,5 +35,12 @@ class BeerRepositoryTest {
                 .upc("123456789012")
                 .price(new BigDecimal("12.99"))
                 .build();
+    }
+
+    @Test
+    void testCreateJson() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        System.out.println(objectMapper.writeValueAsString(getTestBeer()));
     }
 }
