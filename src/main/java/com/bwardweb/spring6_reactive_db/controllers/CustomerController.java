@@ -38,4 +38,25 @@ public class CustomerController {
         );
     }
 
+    @PutMapping(CUSTOMER_PATH_ID)
+    public Mono<ResponseEntity<Void>> updateCustomer(@PathVariable Integer customerId, @Validated @RequestBody CustomerDTO customerDTO) {
+        return customerService.updateCustomer(customerId, customerDTO).map(
+                updatedDto -> ResponseEntity.ok().build()
+        );
+    }
+
+    @PatchMapping(CUSTOMER_PATH_ID)
+    public Mono<ResponseEntity<Void>> patchCustomer(@PathVariable Integer customerId, @Validated @RequestBody CustomerDTO customerDTO) {
+        return customerService.patchCustomer(customerId, customerDTO).map(
+                updatedDto -> ResponseEntity.ok().build()
+        );
+    }
+
+    @DeleteMapping(CUSTOMER_PATH_ID)
+    public Mono<ResponseEntity<Void>> deleteCustomer(@PathVariable Integer customerId) {
+        return customerService.deleteCustomerById(customerId).map(
+                response -> ResponseEntity.noContent().build()
+        );
+    }
+
 }
