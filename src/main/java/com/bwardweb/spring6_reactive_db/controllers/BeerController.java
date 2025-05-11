@@ -44,4 +44,11 @@ public class BeerController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping(BEER_PATH_ID)
+    ResponseEntity<Void> patchBeer(@PathVariable Integer beerId, @RequestBody BeerDTO beerDTO) {
+        beerService.patchBeer(beerId, beerDTO).subscribe();
+
+        return ResponseEntity.ok().build();
+    }
 }
