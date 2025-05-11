@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CustomerDTO {
+    private Integer id;
+
     @NotBlank
     @Size(min = 3, max = 255)
     private String customerName;
