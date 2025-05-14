@@ -4,9 +4,11 @@ package com.bwardweb.spring6_reactive_db.controllers;
 import com.bwardweb.spring6_reactive_db.model.BeerDTO;
 import com.bwardweb.spring6_reactive_db.services.BeerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,7 +29,8 @@ public class BeerController {
 
     @GetMapping(BEER_PATH_ID)
     Mono<BeerDTO> getBeerById(@PathVariable Integer beerId) {
-        return beerService.getBeerById(beerId);
+        return beerService.getBeerById(beerId)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
     @PostMapping(BEER_PATH)
@@ -41,20 +44,23 @@ public class BeerController {
 
     @PutMapping(BEER_PATH_ID)
     Mono<ResponseEntity<Void>> updateBeer(@PathVariable Integer beerId, @Validated @RequestBody BeerDTO beerDTO) {
-        return beerService.updateBeer(beerId, beerDTO).map(
-                updatedDto -> ResponseEntity.noContent().build()
-        );
+        return beerService.updateBeer(beerId, beerDTO)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                .map(updatedDto -> ResponseEntity.noContent().build());
     }
 
     @PatchMapping(BEER_PATH_ID)
     Mono<ResponseEntity<Void>> patchBeer(@PathVariable Integer beerId, @Validated @RequestBody BeerDTO beerDTO) {
-        return beerService.patchBeer(beerId, beerDTO).map(
-                updatedDto -> ResponseEntity.noContent().build()
-        );
+        return beerService.patchBeer(beerId, beerDTO)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                .map(updatedDto -> ResponseEntity.noContent().build());
     }
 
     @DeleteMapping(BEER_PATH_ID)
     Mono<ResponseEntity<Void>> deleteBeer(@PathVariable Integer beerId){
-        return beerService.deleteBeer(beerId).thenReturn(ResponseEntity.noContent().build());
+        return beerService.getBeerById(beerId)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                .map(beerDTO -> deleteBeer(beerDTO.getId()))
+                .thenReturn(ResponseEntity.noContent().build());
     }
 }
